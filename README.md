@@ -1,0 +1,1 @@
+# OCR-for-Tajik-ID-card-
