@@ -65,7 +65,7 @@
                 var form_data = new FormData();
                 form_data.append('file', file_data);
                 $.ajax({
-                    url: '/image_ocr', 
+                    url: '/image_ocr', // # чтобы использовать алгоритм tesseract меняйте на '/tesseract_ocr'
                     type: 'POST',
                     data: form_data,
                     contentType: false,
