@@ -1,16 +1,18 @@
-from flask import Flask, render_template, request, jsonify
-from image_ocr import easyOCR
+from flask import Flask, render_template, request
+from easyOCR import easyOCR
 import os
-from datetime import datetime
+import json
+
 
 app = Flask(__name__, template_folder='templates')
 
+
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('index.html')
 
 
-@app.route('/image_ocr', methods=['POST']) # чтобы использовать алгоритм tesseract меняйте на '/tesseract_ocr'
+@app.route('/easyOCR', methods=['POST'])
 def process_image_route():
     # Получение загруженного изображения
     image = request.files['file']
@@ -20,24 +22,17 @@ def process_image_route():
     text = easyOCR('uploaded_image.jpg')
     # Удаление сохраненного изображения
     os.remove('uploaded_image.jpg')
-    print("iamge processing is over!!!")
-    return text
+
+    json_data = json.dumps(text, ensure_ascii=False)
+
+    response = app.response_class(
+        response=json_data,
+        status=200,
+        mimetype='application/json'
+    )
+
+    return response
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
-'''
- # Возвращаем результаты распознавания текста
-    info = {
-        'passportNum': text['passportNum'],
-        'surname': text['surname'],
-        'pname': text['pname'],
-        'patronymic': text['patronymic'],
-        'birth_date': text['birth_date'],
-        'issue_date': text['issue_date'],
-        'expiration_date': text['expiration_date'],
-        'national_id': text['national_id']
-
-    }
-'''
-
+    app.run()
