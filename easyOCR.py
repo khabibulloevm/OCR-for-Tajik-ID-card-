@@ -2,7 +2,6 @@ import easyocr
 import cv2
 import re
 import datetime
-import json
 
 
 def easyOCR(image_path):
@@ -46,25 +45,34 @@ def easyOCR(image_path):
         if 2 <= len(item[1]) <= 3 and item[1] == "З/F" or item[1] == "М/M":
             data.append(item[1][0])
 
-    return data
-
-
-'''
     info = {
-        'passportNum': data[7],
+        'passportNum': data[8],
         'surname': data[0],
-        'name': data[1],
+        'pname': data[1],
         'patronymic': data[2],
-        'birth_date': data[3],
-        'issue_date': data[4],
-        'expiration_date': data[5],
-        'national_id': data[6]
+        'gender': data[3],
+        'birth_date': data[4],
+        'issue_date': data[5],
+        'expiration_date': data[6],
+        'national_id': data[7]
     }
 
-    json_info=json.dumps(info, ensure_ascii=False)
-'''
+    return info
 
+'''
 # Пример использования
-#image_path = 'images/11.jpg'
-#res = easyOCR(image_path)
-#print(res)
+image_path = 'images/11.jpg'
+res = easyOCR(image_path)
+
+# Можно сохарнить распознованные данные в txt
+# Путь к новому файлу .txt
+txt_file_path = "ocr_result.txt"
+
+# Создание нового файла .txt и запись данных
+with open(txt_file_path, 'w', encoding='utf-8') as txt_file:
+    for key, value in res.items():
+        txt_file.write(f"{key}: {value}\n")
+
+print("Словарь успешно записан в текстовый файл.")
+
+'''
