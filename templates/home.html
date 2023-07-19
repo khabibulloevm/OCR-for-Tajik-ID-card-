@@ -34,17 +34,34 @@
             margin: 5px;
             font-weight: bold;
         }
+
+        #previewContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #previewImage {
+            width: 300px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
-    <h1>Загрузка и распознавание фото паспорта</h1>
+    <h1>OCR - Tаджикского национального паспорта</h1>
 
     <div class="form-container">
         <input type="file" id="passportPhoto" accept="image/*">
-        <button id="saveButton">Загрузить фото</button>
+        <button id="saveButton">Отправить на обработку</button>
     </div>
 
-    <h2>Распознанные поля паспорта:</h2>
+    <div id="previewContainer">
+        <img id="previewImage" src="" alt="Preview Image">
+    </div>
+
+    <h2>Паспортные данные:</h2>
 
     <div id="resultContainer">
         <span id="passportNum" class="result-field"></span><br>
@@ -65,24 +82,32 @@
                 var form_data = new FormData();
                 form_data.append('file', file_data);
                 $.ajax({
-                    url: '/image_ocr', // # чтобы использовать алгоритм tesseract меняйте на '/tesseract_ocr'
+                    url: '/easyOCR',  // чтобы использовать алгоритм tesseract меняйте на '/tesseract_ocr'
                     type: 'POST',
                     data: form_data,
                     contentType: false,
                     processData: false,
                     success: function(response){
                         // Обработка ответа от сервера и отображение результатов
-                        var data = JSON.parse(response);
-                        $("#passportNum").text("Раками паспорт: " + data.passportNum);
+                        var dict = JSON.stringify(response)
+                        var data = JSON.parse(dict);
+                        $("#passportNum").text("Рақами шиснонома: " + data.passportNum);
                         $("#surname").text("Насаб: " + data.surname);
                         $("#pname").text("Ном: " + data.pname);
                         $("#patronymic").text("Номи падар: " + data.patronymic);
                         $("#birth_date").text("Санаи таваллуд: " + data.birth_date);
-                        $("#issue_date").text("Огози эътибор: " + data.issue_date);
-                        $("#expiration_date").text("Анчоми эътибор: " + data.expiration_date);
-                        $("#gender").text("Чинс: " + data.gender);
-                        $("#national_id").text("Раками ягонаи милли: " + data.national_id);
+                        $("#issue_date").text("Оғози эътибор: " + data.issue_date);
+                        $("#expiration_date").text("Анҷоми эътибор: " + data.expiration_date);
+                        $("#gender").text("Ҷинс: " + data.gender);
+                        $("#national_id").text("Рақами ягонаи миллӣ: " + data.national_id);
                         // Добавьте обработку остальных полей паспорта
+
+                        // Отображение загруженного фото
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            $('#previewImage').attr('src', e.target.result);
+                        }
+                        reader.readAsDataURL(file_data);
                     }
                 });
             });
